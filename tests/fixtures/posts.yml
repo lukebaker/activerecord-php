@@ -1,0 +1,8 @@
+first_post:
+  id: 1
+  title: First Post
+  body: Hi, this is my first post. Enjoy!
+second_post:
+  id: 2
+  title: Second Post
+  body: This is the second post.

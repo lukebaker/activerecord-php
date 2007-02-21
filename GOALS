@@ -1,0 +1,20 @@
+Implement clone of Ruby on Rails' ActiveRecord
+
+Focus on clean, simple, easy to use inteface to database.
+
+$blog_post = Post::find(2)
+echo $blog_post->title;
+$blog_post->title = "Foo bar";
+$blog_post->save();
+
+# single SQL query
+$blog_post = Post::find(2, array('include' => 'comments');
+foreach ($blog_post->comments as $comment) {
+  echo "{$comment->author}\n";
+}
+
+# multiple SQL queries
+$blog_post = Post::find(2);
+foreach ($blog_post->comments as $comment) {
+  echo "{$comment->author}\n";
+}
