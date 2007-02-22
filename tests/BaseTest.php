@@ -5,7 +5,7 @@ class BaseTest extends UnitTestCase {
   static $fd = array();
 
    function __construct() {
-       require_once dirname(__FILE__). '/../models/active_record/ActiveRecord.php';
+       require_once dirname(__FILE__). '/../models/activerecord/ActiveRecord.php';
        require_once '../vendors/spyc/spyc.php';
    }
     
