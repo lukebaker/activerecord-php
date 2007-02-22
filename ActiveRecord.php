@@ -134,6 +134,8 @@ class ActiveRecord {
   }
 
   function save() {
+    if (method_exists($this, 'before_save'))
+      $this->before_save();
     foreach ($this->associations as $name => $assoc) {
       if ($assoc instanceOf BelongsTo && $assoc->needs_saving()) {
         /* save the object referenced by this association */
@@ -147,6 +149,8 @@ class ActiveRecord {
       }
     }
     if ($this->new_record) {
+      if (method_exists($this, 'before_create'))
+        $this->before_create();
       /* insert new record */
       foreach ($this->columns as $column) {
         if ($column == $this->primary_key) continue;
@@ -163,8 +167,12 @@ class ActiveRecord {
       $this->{$this->primary_key} = self::last_insert_id();
       $this->new_record = false;
       $this->is_modified = false;
+      if (method_exists($this, 'after_create'))
+        $this->after_create();
     }
     elseif ($this->is_modified) {
+      if (method_exists($this, 'before_update'))
+        $this->before_update();
       /* update existing record */
       $col_vals = array();
       foreach ($this->columns as $column) {
@@ -179,6 +187,8 @@ class ActiveRecord {
       $res = self::query($query);
       $this->new_record = false;
       $this->is_modified = false;
+      if (method_exists($this, 'after_update'))
+        $this->after_update();
     }
     foreach ($this->associations as $name => $assoc) {
       if ($assoc instanceOf HasOne && $assoc->needs_saving()) {
@@ -191,10 +201,13 @@ class ActiveRecord {
         $assoc->save_as_needed($this);
       }
     }
+    if (method_exists($this, 'after_save'))
+      $this->after_save();
   }
 
   function destroy() {
-    /* TODO: run related callbacks here incl. deletion of dependent assoc. */
+    if (method_exists($this, 'before_destroy'))
+      $this->before_destroy();
     foreach ($this->associations as $name => $assoc) {
       $assoc->destroy($this);
     }
@@ -203,6 +216,8 @@ class ActiveRecord {
            . "LIMIT 1";
     self::query($query);
     $this->frozen = true;
+    if (method_exists($this, 'after_destroy'))
+      $this->after_destroy();
     return true;
   }
 
