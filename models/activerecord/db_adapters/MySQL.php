@@ -5,16 +5,16 @@ class MySQLAdapter implements DatabaseAdapter {
   static function get_dbh($host="localhost", $db=null, $user=null, $password=null, $driver="mysql") {
     $dbh = mysql_connect($host, $user, $password);
     if (!$dbh)
-      throw Exception("Could not connect to database server: ".mysql_error());
+      throw new Exception("Could not connect to database server: ".mysql_error());
     if (!mysql_select_db($db, $dbh))
-      throw Exception("Could not select database: " . mysql_error());
+      throw new Exception("Could not select database: " . mysql_error());
     return $dbh;
   }
 
   static function query($query, $dbh=null) {
     $res = mysql_query($query, $dbh);
     if (!$res) {
-      throw Exception("Error executing query: '$query' : " . mysql_error());
+      throw new Exception("Error executing query: '$query' : " . mysql_error());
     }
     $rows = array();
     if ($res !== true && mysql_num_rows($res) != 0) {

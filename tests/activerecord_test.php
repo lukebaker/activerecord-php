@@ -103,6 +103,65 @@ class TestActiveRecord extends BaseTest {
     $this->AssertEqual($c, array());
   }
 
+  function test_before_save() {
+    $s = new Slug(array('slug' => 'before_save', 'post_id' => 1));
+    $s->save();
+    $this->AssertEqual($s->slug, 'before_save-success');
+  }
+
+  function test_before_create() {
+    $s = new Slug(array('slug' => 'before_create', 'post_id' => 1));
+    $s->save();
+    $this->AssertEqual($s->slug, 'before_create-success');
+  }
+
+  function test_after_create() {
+    $s = new Slug(array('slug' => 'after_create', 'post_id' => 1));
+    $s->save();
+    $this->AssertEqual($s->slug, 'after_create-success');
+    $this->AssertEqual(Slug::find($s->id)->slug, 'after_create');
+  }
+
+  function test_before_update() {
+    $s = Slug::find('first');
+    $s->slug = "before_update";
+    $s->save();
+    $this->AssertEqual($s->slug, 'before_update-success');
+  }
+
+  function test_after_update() {
+    $s = Slug::find('first');
+    $s->slug = "after_update";
+    $s->save();
+    $this->AssertEqual($s->slug, 'after_update-success');
+    $this->AssertEqual(Slug::find('first')->slug, "after_update");
+  }
+
+  function test_after_save() {
+    $s = new Slug(array('slug' => 'after_save', 'post_id' => 1));
+    $s->save();
+    $this->AssertEqual($s->slug, 'after_save-success');
+    $this->AssertEqual(Slug::find($s->id)->slug, 'after_save');
+  }
+
+  function test_before_destroy() {
+    $s = Slug::find("first");
+    $s->slug = "before_destroy";
+    $s->destroy();
+    $this->AssertEqual($s->slug, 'before_destroy-success');
+  }
+
+  function test_after_destroy() {
+    $s = Slug::find("first");
+    $s->slug = "after_destroy";
+    try {
+      $s->destroy();
+      $this->fail();
+    }
+    catch (Exception $e) {
+      $this->AssertEqual($e->getMessage(), 'after_destroy');
+    }
+  }
 }
 
 ?>
