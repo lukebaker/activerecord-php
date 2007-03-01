@@ -26,6 +26,7 @@ class ActiveRecord {
       if (isset($this->$type)) {
         $class_name = Inflector::classify($type);
         foreach ($this->$type as $assoc) {
+          $assoc = self::decode_if_json($assoc);
           /* handle association sent in as array with options */
           if (is_array($assoc)) {
             $key = key($assoc);
@@ -101,6 +102,19 @@ class ActiveRecord {
   function is_modified() { return $this->is_modified; }
   function set_modified($val) { $this->is_modified = $val; }
   static function get_query_count() { return self::$query_count; }
+
+  /* Json helper will decode a string as Json if it starts with a [ or {
+      if the Json::decode fails, we just return the original value
+  */
+  static function decode_if_json($json) {
+    require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. 'Zend' .DIRECTORY_SEPARATOR. 'Json.php';
+    if (is_string($json) && preg_match('/^\s*[\{\[]/', $json) != 0) {
+      try {
+        $json = Zend_Json::decode($json);
+      } catch (Zend_Json_Exception $e) { }
+    }
+    return $json;
+  }
 
   /* 
      DB specific stuff
