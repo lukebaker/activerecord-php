@@ -104,7 +104,7 @@ class ActiveRecord {
   static function get_query_count() { return self::$query_count; }
 
   /* Json helper will decode a string as Json if it starts with a [ or {
-      if the Json::decode fails, we just return the original value
+      if the Json::decode fails, we return the original value
   */
   static function decode_if_json($json) {
     require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. 'Zend' .DIRECTORY_SEPARATOR. 'Json.php';
@@ -300,6 +300,7 @@ class ActiveRecord {
   function generate_find_query($class_name, $id, $options=null) {
       //$dbh =& $this->get_dbh();
       $item = new $class_name;
+      $options = self::decode_if_json($options);
 
       /* first sanitize what we can */
       if (is_array($id)) {
