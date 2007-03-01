@@ -28,7 +28,7 @@ class TestHasMany extends BaseTest {
 
   function testJoin() {
     $query_count = Post::get_query_count();
-    $p = Post::find(1, array('include' => 'comments'));
+    $p = Post::find(1, '{"include" : "comments"}');
     $this->AssertEqual(Post::get_query_count(), $query_count + 1);
 
     $this->AssertEqual($p->comments[0]->id, 1);
