@@ -162,6 +162,21 @@ class TestActiveRecord extends BaseTest {
       $this->AssertEqual($e->getMessage(), 'after_destroy');
     }
   }
+
+  function test_update_attributes() {
+    $attributes = array('slug' => 'foobar', 'post_id' => 2);
+    $s = Slug::find('first');
+    $this->AssertNotEqual($s->slug, $attributes['slug']);
+    $this->AssertNotEqual($s->post_id, $attributes['post_id']);
+    $this->AssertFalse($s->is_modified());
+
+    $s->update_attributes($attributes);
+
+    $this->AssertEqual($s->slug, $attributes['slug']);
+    $this->AssertEqual($s->post_id, $attributes['post_id']);
+    $this->AssertFalse($s->is_modified());
+    
+  }
 }
 
 ?>

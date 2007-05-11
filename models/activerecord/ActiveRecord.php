@@ -147,6 +147,12 @@ class ActiveRecord {
       array($dbh, $resource));
   }
 
+  function update_attributes($attributes) {
+    foreach ($attributes as $key => $value)
+      $this->$key = $value;
+    return $this->save();
+  }
+
   function save() {
     if (method_exists($this, 'before_save'))
       $this->before_save();
