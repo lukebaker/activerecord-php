@@ -3,8 +3,9 @@
 require_once 'ActiveRecord.php';
 
 $is_web_request = ($_SERVER['HTTP_HOST']) ? true : false;
-$generated_models_dir = dirname(__FILE__) .DIRECTORY_SEPARATOR. 'generated_models' .DIRECTORY_SEPARATOR;
 $stub_models_dir = dirname(__FILE__) .DIRECTORY_SEPARATOR. '..' .DIRECTORY_SEPARATOR;
+$generated_models_dir = $stub_models_dir . 'generated_models' .DIRECTORY_SEPARATOR;
+mkdir($generated_models_dir);
 
 $template = file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR. '/ModelBase.tpl');
 $stub_template = file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR. '/ModelStub.tpl');
