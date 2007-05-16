@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. '..' .DIRECTORY_SEPARATOR. 'ActiveRecord.php';
+require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. '..' .DIRECTORY_SEPARATOR. '{$ar_dir}' .DIRECTORY_SEPARATOR. 'ActiveRecord.php';
 
 class {$class_name}Base extends ActiveRecord {
 
