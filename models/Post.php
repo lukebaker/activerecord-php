@@ -1,5 +1,5 @@
 <?php
-require_once 'activerecord' .DIRECTORY_SEPARATOR. 'generated_models' .DIRECTORY_SEPARATOR. 'PostBase.php';
+require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. 'generated_models' .DIRECTORY_SEPARATOR. 'PostBase.php';
 class Post extends PostBase {
 
   protected $has_many = array('{"comments" : {"dependent" : "destroy"}}', 'categorizations',
