@@ -199,7 +199,7 @@ class ActiveRecord {
       foreach ($this->columns as $column) {
         if ($column == $this->primary_key) continue;
         $value = is_null($this->$column) ? 'NULL' : self::quote($this->$column);
-        $col_vals[] = "$column = $value";
+        $col_vals[] = "`$column` = $value";
       }
       $columns_values = implode(", ", $col_vals);
       $query = "UPDATE {$this->table_name} SET $columns_values "
