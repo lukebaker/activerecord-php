@@ -5,6 +5,7 @@ class {$class_name}Base extends ActiveRecord {
 
   protected $columns = array({$columns});
   protected $table_name = '{$table_name}';
+  protected $table_vanity_name = '{$table_vanity_name}';
   protected $primary_key = '{$primary_key}';
 
   static function find($id, $options=null) {

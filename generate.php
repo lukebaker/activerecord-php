@@ -16,13 +16,18 @@ $table_s = ActiveRecord::query("SHOW TABLES");
 $tables = array();
 foreach ($table_s as $table)
   $tables[] = $table;
+/* end hack for PDO */
 foreach ($tables as $table_row) {
   $table_name = current($table_row);
+  $table_vanity_name = $table_name;
+  if (AR_PREFIX && AR_PREFIX != '')
+    $table_vanity_name = preg_replace('/^' .AR_PREFIX. '/', '', $table_name);
+
   if (is_array($AR_TABLES)) {
-    if (!in_array($table_name, $AR_TABLES))
+    if (!in_array($table_vanity_name, $AR_TABLES))
       continue;
   }
-  $class_name = Inflector::classify($table_name);
+  $class_name = Inflector::classify($table_vanity_name);
   $columns_q = ActiveRecord::query("DESC $table_name");
   $columns = array();
   foreach ($columns_q as $column_row) {
@@ -38,6 +43,7 @@ foreach ($tables as $table_row) {
   $gen_file = $template;
   $gen_file = preg_replace('/{\$ar_dir}/', $this_dir, $gen_file);
   $gen_file = preg_replace('/{\$table_name}/', $table_name, $gen_file);
+  $gen_file = preg_replace('/{\$table_vanity_name}/', $table_vanity_name, $gen_file);
   $gen_file = preg_replace('/{\$class_name}/', $class_name, $gen_file);
   $gen_file = preg_replace('/{\$primary_key}/', $primary_key, $gen_file);
   $gen_file = preg_replace('/{\$columns}/', implode(", ", $columns), $gen_file);
