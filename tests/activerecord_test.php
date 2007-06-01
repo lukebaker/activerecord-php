@@ -37,8 +37,8 @@ class TestActiveRecord extends BaseTest {
     for ($i = 0; $i < 1000; $i++)
       new Post();
     $end_time = microtime(true);
-    # must be able to do at least 500 constructors / second
-    $this->AssertTrue((1000 / ($end_time - $start_time)) > 500);
+    # must be able to do at least 400 constructors / second
+    $this->AssertTrue((1000 / ($end_time - $start_time)) > 400);
   }
 
   function test_FindEnsureIsModifiedEqualsFalse() {
