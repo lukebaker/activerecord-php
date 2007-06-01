@@ -5,5 +5,6 @@ class Post extends PostBase {
   protected $has_many = array('{"comments" : {"dependent" : "destroy"}}', 'categorizations',
     array('categories' => array('through' => 'categorizations')));
   protected $has_one  = array('slug');
+  protected $belongs_to = array('author');
 }
 ?>

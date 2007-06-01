@@ -1,11 +1,11 @@
 <?php
 require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. '..' .DIRECTORY_SEPARATOR. 'activerecord' .DIRECTORY_SEPARATOR. 'ActiveRecord.php';
 
-class CategoryBase extends ActiveRecord {
+class AuthorBase extends ActiveRecord {
 
   protected $columns = array('id', 'name');
-  protected $table_name = 'categories';
-  protected $table_vanity_name = 'categories';
+  protected $table_name = 'prefix_authors';
+  protected $table_vanity_name = 'authors';
   protected $primary_key = 'id';
 
   static function find($id, $options=null) {

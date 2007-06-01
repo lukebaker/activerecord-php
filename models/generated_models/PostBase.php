@@ -3,8 +3,9 @@ require_once dirname(__FILE__) .DIRECTORY_SEPARATOR. '..' .DIRECTORY_SEPARATOR. 
 
 class PostBase extends ActiveRecord {
 
-  protected $columns = array('id', 'title', 'body');
+  protected $columns = array('id', 'title', 'body', 'author_id');
   protected $table_name = 'posts';
+  protected $table_vanity_name = 'posts';
   protected $primary_key = 'id';
 
   static function find($id, $options=null) {

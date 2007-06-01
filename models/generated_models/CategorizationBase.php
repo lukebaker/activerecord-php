@@ -5,6 +5,7 @@ class CategorizationBase extends ActiveRecord {
 
   protected $columns = array('id', 'post_id', 'category_id');
   protected $table_name = 'categorizations';
+  protected $table_vanity_name = 'categorizations';
   protected $primary_key = 'id';
 
   static function find($id, $options=null) {
