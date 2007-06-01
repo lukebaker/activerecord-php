@@ -1,5 +1,6 @@
 <?php
-require_once 'inflector.php';
+if (!class_exists('Inflector'))
+  require_once 'inflector.php';
 class Association {
   protected $dest_class;
   protected $source_class;
