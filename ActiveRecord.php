@@ -2,7 +2,8 @@
 require_once 'BelongsTo.php';
 require_once 'HasMany.php';
 require_once 'HasOne.php';
-require_once 'inflector.php';
+if (!class_exists('Inflector'))
+  require_once 'inflector.php';
 require_once 'config.php';
 require_once dirname(__FILE__) . '/db_adapters/'.AR_ADAPTER.'.php';
 class ActiveRecord {
