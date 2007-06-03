@@ -45,6 +45,10 @@ class HasOne extends Association {
     return array( array($dest_table => $columns), $join);
   }
   function populate_from_find($attributes) {
+    // check if all attributes are NULL
+    $uniq_vals = array_unique(array_values($attributes));
+    if (count($uniq_vals) == 1 && is_null(current($uniq_vals))) return;
+
     $class = $this->dest_class;
     $item = new $class($attributes);
     $item->new_record = false;
