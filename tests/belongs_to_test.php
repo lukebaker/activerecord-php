@@ -76,6 +76,11 @@ class TestBelongsTo extends BaseTest {
     $this->AssertEqual(Post::get_query_count(), $query_count + 1);
   }
 
+  function testFindWithJoinWithoutResults() {
+    $c = Comment::find(3, array('include' => 'post'));
+    $this->AssertNull($c->post);
+  }
+
   function test_NeedsSaving() {
     $c = Comment::find(1, array('include' => 'post'));
     $this->AssertFalse($c->post_needs_saving());

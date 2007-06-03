@@ -47,6 +47,13 @@ class TestHasMany extends BaseTest {
     $this->AssertEqual(Post::get_query_count(), $query_count + 1);
   }
 
+  function testJoinWithNoResults() {
+    $query_count = Post::get_query_count();
+    $p = Post::find(2, array('include' => 'comments'));
+    $this->AssertEqual(Post::get_query_count(), $query_count + 1);
+    $this->AssertEqual(count($p->comments), 0);
+  }
+
   function testThroughGet() {
     $query_count = Post::get_query_count();
     $p = Post::find(1);

@@ -26,6 +26,13 @@ class TestHasOne extends BaseTest {
     $this->AssertEqual(Post::get_query_count(), $query_count + 1);
   }
 
+  function testGetViaJoinWithNoResults() {
+    $query_count = Post::get_query_count();
+    $p = Post::find(2, array('include' => 'slug'));
+    $this->AssertEqual(Post::get_query_count(), $query_count + 1);
+    $this->AssertNull($p->slug);
+  }
+
   function testSetWithParentSaveButNotChild() {
     $query_count = Post::get_query_count();
     $p = Post::find(1);
