@@ -92,6 +92,10 @@ class HasMany extends Association {
   }
 
   function populate_from_find($attributes) {
+    // check if all attributes are NULL
+    $uniq_vals = array_unique(array_values($attributes));
+    if (count($uniq_vals) == 1 && is_null(current($uniq_vals))) return;
+
     $class = $this->dest_class;
     $item = new $class($attributes);
     $item->new_record = false;
