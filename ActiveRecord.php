@@ -378,8 +378,8 @@ class ActiveRecord {
       $query  = "SELECT $select FROM {$item->table_name}";
       $query .= (count($joins) > 0) ? " " . implode(" ", $joins) : "";
       $query .= ($where) ? " WHERE $where" : "";
-      $query .= ($options['order']) ? " ORDER BY {$options['order']}" : "";
       $query .= ($options['group']) ? " GROUP BY {$options['group']}" : "";
+      $query .= ($options['order']) ? " ORDER BY {$options['order']}" : "";
       $query .= ($limit) ? " LIMIT $limit" : "";
       $query .= ($offset) ? " OFFSET $offset" : "";
       return array('query' => $query, 'column_lookup' => $column_lookup);
