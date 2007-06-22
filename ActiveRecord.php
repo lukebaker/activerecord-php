@@ -319,7 +319,7 @@ class ActiveRecord {
         $id = self::quote($id);
       }
       /* regex for limit, order, group */
-      $regex = '/^[A-Za-z0-9\-_ ,]+$/';
+      $regex = '/^[A-Za-z0-9\-_ ,\(\)]+$/';
       if (!preg_match($regex, $options['limit']))
         $options['limit'] = '';
       if (!preg_match($regex, $options['order']))
