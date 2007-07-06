@@ -234,6 +234,15 @@ class TestHasMany extends BaseTest {
     $this->AssertEqual($p->title, $p2->title);
     $this->AssertEqual($p2->comments[0]->body, $p->comments[0]->body);
   }
+
+  function test_GetArrayOfIds() {
+    $p = Post::find(1, array('include' => 'comments'));
+    $comment_ids = array();
+    foreach ($p->comments as $comment)
+      $comment_ids[] = $comment->id;
+    $this->AssertEqual($p->comment_ids, $comment_ids);
+  }
+
 }
 
 ?>
