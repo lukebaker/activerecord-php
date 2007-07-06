@@ -54,9 +54,19 @@ class ActiveRecord {
       return $this->associations[$name]->get($this);
     elseif (in_array($name, $this->columns))
       return null;
-    else
-      throw new ActiveRecordException("attribute called '$name' doesn't exist",
-        ActiveRecordException::AttributeNotFound);
+    elseif (preg_match('/^(.+?)_ids$/', $name, $matches)) {
+      /* allow for $p->comment_ids type gets on HasMany associations */
+      $assoc_name = Inflector::pluralize($matches[1]);
+      if ($this->associations[$assoc_name] instanceof HasMany) {
+        $objs = $this->associations[$assoc_name]->get($this);
+        $ids = array();
+        foreach ($objs as $obj)
+          $ids[] = $obj->{$obj->get_primary_key()};
+        return $ids;
+      }
+    }
+    throw new ActiveRecordException("attribute called '$name' doesn't exist",
+      ActiveRecordException::AttributeNotFound);
   }
 
   function __set($name, $value) {
