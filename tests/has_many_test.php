@@ -243,6 +243,14 @@ class TestHasMany extends BaseTest {
     $this->AssertEqual($p->comment_ids, $comment_ids);
   }
 
+  function test_GetArrayOfIdsOnManyToMany() {
+    $p = Post::find(1, array('include' => 'categories'));
+    $category_ids = array();
+    foreach ($p->categories as $category)
+      $category_ids[] = $category->id;
+    $this->AssertEqual($p->category_ids, $category_ids);
+  }
+
 }
 
 ?>
