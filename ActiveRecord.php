@@ -57,13 +57,8 @@ class ActiveRecord {
     elseif (preg_match('/^(.+?)_ids$/', $name, $matches)) {
       /* allow for $p->comment_ids type gets on HasMany associations */
       $assoc_name = Inflector::pluralize($matches[1]);
-      if ($this->associations[$assoc_name] instanceof HasMany) {
-        $objs = $this->associations[$assoc_name]->get($this);
-        $ids = array();
-        foreach ($objs as $obj)
-          $ids[] = $obj->{$obj->get_primary_key()};
-        return $ids;
-      }
+      if ($this->associations[$assoc_name] instanceof HasMany)
+        return $this->associations[$assoc_name]->get_ids($this);
     }
     throw new ActiveRecordException("attribute called '$name' doesn't exist",
       ActiveRecordException::AttributeNotFound);

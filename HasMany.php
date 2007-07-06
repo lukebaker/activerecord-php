@@ -72,6 +72,14 @@ class HasMany extends Association {
     return $this->value;
   }
 
+  function get_ids(&$source, $force='false') {
+    $ids = array();
+    $objects = $this->get($source, $force);
+    foreach ($objects as $object)
+      $ids[] = $object->{$object->get_primary_key()};
+    return $ids;
+  }
+
   function join() {
     $dest_table = Inflector::tableize($this->dest_class);
     $source_table = Inflector::tableize($this->source_class);
