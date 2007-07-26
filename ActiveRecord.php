@@ -67,6 +67,12 @@ class ActiveRecord {
   function __set($name, $value) {
     if ($this->frozen)
       throw new ActiveRecordException("Can not update $name as object is frozen.", ActiveRecordException::ObjectFrozen);
+
+    /* allow for $p->comment_ids type sets on HasMany associations */
+    if (preg_match('/^(.+?)_ids$/', $name, $matches)) {
+      $assoc_name = Inflector::pluralize($matches[1]);
+    }
+
     if (in_array($name, $this->columns)) {
       $this->attributes[$name] = $value;
       $this->is_modified = true;
@@ -78,6 +84,11 @@ class ActiveRecord {
     elseif (array_key_exists($name, $this->associations)) {
       /* call like $comment->post = $mypost */
       $this->associations[$name]->set($value, $this);
+    }
+    elseif (array_key_exists($assoc_name, $this->associations)
+              && $this->associations[$assoc_name] instanceof HasMany) {
+      /* allow for $p->comment_ids type sets on HasMany associations */
+      $this->associations[$assoc_name]->set_ids($value, $this);
     }
     else
       throw new ActiveRecordException("attribute called '$name' doesn't exist",

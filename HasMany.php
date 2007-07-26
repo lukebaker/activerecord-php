@@ -80,6 +80,56 @@ class HasMany extends Association {
     return $ids;
   }
 
+  function set_ids($ids, &$source) {
+    /* get existing objects in relationship (force=true, don't use cache) */
+    $objects = $this->get($source, true);
+    $existing_ids = $this->get_ids($source, false);
+    $ids_to_add = array_diff($ids, $existing_ids);
+    $ids_to_remove = array_diff($existing_ids, $ids);
+
+    /* add relationships that need adding */
+    if (count($ids_to_add) > 0) {
+      $objects_to_add = call_user_func_array(array($this->dest_class, 'find'),
+        array($ids_to_add));
+      $this->push($objects_to_add, $source);
+    }
+
+    /* remove relationships that need removing */
+    if (count($ids_to_remove) > 0) {
+      $objects_to_rem = call_user_func_array(array($this->dest_class, 'find'),
+        array($ids_to_remove));
+      $this->break_up($objects_to_rem, $source);
+    }
+  }
+
+  /* break up the relationship
+      $objects = array of $objects that are related but should no longer be
+      $source = source object that we're working with
+  */
+  function break_up($objects, &$source) {
+    foreach ($objects as $object) {
+      if ($this->options['dependent'] == 'destroy')
+        $object->destroy();
+      else {
+        if (!$this->options['through']) {
+          $object->{$this->foreign_key} = null;
+          $object->save();
+        }
+        else {
+          $through_class = Inflector::classify($this->options['through']);
+          $fk_1 = Inflector::foreign_key($this->dest_class);
+          $fk_2 = Inflector::foreign_key($this->source_class);
+          $k1   = $object->{$object->get_primary_key()};
+          $k2   = $source->{$source->get_primary_key()};
+          $through = call_user_func_array(array($through_class, 'find'),
+            array('first',
+              array('conditions' => "$fk_1 = $k1 AND $fk_2 = $k2")));
+          $through->destroy();
+        }
+      }
+    }
+  }
+
   function join() {
     $dest_table = Inflector::tableize($this->dest_class);
     $source_table = Inflector::tableize($this->source_class);
