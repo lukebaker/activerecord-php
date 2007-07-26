@@ -146,6 +146,34 @@ class TestHasMany extends BaseTest {
     $this->AssertEqual(Post::get_query_count(), $query_count + 6);
   }
 
+  function test_SetArrayOfIdsAddingOne() {
+    $p = Post::find(1);
+    $comment_ids = array(1, 2, 3);
+    $p->comment_ids = $comment_ids;
+    $this->AssertEqual($p->comment_ids, $comment_ids);
+  }
+
+  function test_SetArrayOfIdsRemovingOneDependent() {
+    $p = Post::find(1);
+    $old_comment_ids = $p->comment_ids;
+    $removed_id = array_pop($old_comment_ids);
+    $comment_ids = $old_comment_ids;
+    $p->comment_ids = $comment_ids;
+    $this->AssertEqual($p->comment_ids, $comment_ids);
+    try {
+      $c = Comment::find($removed_id);
+      $this->fail();
+    } catch (Exception $e) { $this->pass(); }
+  }
+
+  function test_SetArrayOfIdsRemovingOneThrough() {
+    $p = Post::find(1);
+    $old_cat_ids = $p->category_ids;
+    $removed_id = array_pop($old_cat_ids);
+    $p->category_ids = $old_cat_ids;
+    $this->AssertEqual($p->category_ids, $old_cat_ids);
+  }
+
   /* set tests with through associations */
   function test_SetWithNeitherSavedThrough() {
     $p = new Post(array('title' => 'post title'));
