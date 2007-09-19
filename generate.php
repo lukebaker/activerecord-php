@@ -3,7 +3,7 @@
 require_once 'ActiveRecord.php';
 
 $is_web_request = ($_SERVER['HTTP_HOST']) ? true : false;
-$stub_models_dir = dirname(__FILE__) .DIRECTORY_SEPARATOR. '..' .DIRECTORY_SEPARATOR;
+$stub_models_dir = dirname(dirname(__FILE__)) .DIRECTORY_SEPARATOR;
 $generated_models_dir = $stub_models_dir . 'generated_models' .DIRECTORY_SEPARATOR;
 @mkdir($generated_models_dir);
 
