@@ -1,6 +1,6 @@
 <?php
 
-require_once 'ActiveRecord.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'ActiveRecord.php';
 
 $is_web_request = ($_SERVER['HTTP_HOST']) ? true : false;
 $stub_models_dir = dirname(dirname(__FILE__)) .DIRECTORY_SEPARATOR;

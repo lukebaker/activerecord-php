@@ -1,11 +1,11 @@
 <?php
-require_once 'BelongsTo.php';
-require_once 'HasMany.php';
-require_once 'HasOne.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'BelongsTo.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'HasMany.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'HasOne.php';
 if (!class_exists('Inflector'))
-  require_once 'inflector.php';
-require_once 'config.php';
-require_once dirname(__FILE__) . '/db_adapters/'.AR_ADAPTER.'.php';
+  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'inflector.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'db_adapters' .DIRECTORY_SEPARATOR . AR_ADAPTER.'.php';
 class ActiveRecord {
 
   protected $columns       = array();
