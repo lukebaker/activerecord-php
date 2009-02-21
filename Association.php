@@ -21,7 +21,7 @@ class Association {
   }
 
   function destroy(&$source) {
-    if ($this->options['dependent'] == 'destroy') {
+    if (isset($this->options['dependent']) && $this->options['dependent'] == 'destroy') {
       $this->get($source);
       if (is_array($this->value)) {
         foreach ($this->value as $val)

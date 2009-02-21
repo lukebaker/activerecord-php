@@ -85,7 +85,8 @@ class ActiveRecord {
       /* call like $comment->post = $mypost */
       $this->associations[$name]->set($value, $this);
     }
-    elseif (array_key_exists($assoc_name, $this->associations)
+    elseif (isset($assoc_name)
+              && array_key_exists($assoc_name, $this->associations)
               && $this->associations[$assoc_name] instanceof HasMany) {
       /* allow for $p->comment_ids type sets on HasMany associations */
       $this->associations[$assoc_name]->set_ids($value, $this);
@@ -336,13 +337,13 @@ class ActiveRecord {
       }
       /* regex for limit, order, group */
       $regex = '/^[A-Za-z0-9\-_ ,\(\)]+$/';
-      if (!preg_match($regex, $options['limit']))
+      if (!isset($options['limit']) || !preg_match($regex, $options['limit']))
         $options['limit'] = '';
-      if (!preg_match($regex, $options['order']))
+      if (!isset($options['order']) || !preg_match($regex, $options['order']))
         $options['order'] = '';
-      if (!preg_match($regex, $options['group']))
+      if (!isset($options['group']) || !preg_match($regex, $options['group']))
         $options['group'] = '';
-      if (!is_numeric($options['offset']))
+      if (!isset($options['offset']) || !is_numeric($options['offset']))
         $options['offset'] = '';
 
       $select = '*';
@@ -353,18 +354,19 @@ class ActiveRecord {
       elseif ($id != 'all')
         $where = "{$item->table_name}.{$item->primary_key} = $id";
 
-      if ($options['conditions'])
-        $where = ($where) ? $where . " AND (" . $options['conditions'] .")"
+      if (isset($options['conditions']))
+        $where = (isset($where) && $where) ? $where . " AND (" . $options['conditions'] .")"
                           : $options['conditions'];
       if ($options['offset'])
         $offset = $options['offset'];
       if ($options['limit'] && !isset($limit))
         $limit = $options['limit'];
-      if ($options['select'])
+      if (isset($options['select']))
         $select = $options['select'];
       $joins = array();
       $tables_to_columns = array();
-      if ($options['include']) {
+      $column_lookup = array();
+      if (isset($options['include'])) {
         array_push($tables_to_columns,
           array(Inflector::tableize(get_class($item)) => $item->get_columns()));
         $includes = preg_split('/[\s,]+/', $options['include']);
@@ -378,7 +380,6 @@ class ActiveRecord {
         }
         // set the select variable so all column names are unique
         $selects = array();
-        $column_lookup = array();
         foreach ($tables_to_columns as $table_key => $columns) {
           foreach ($columns as $table => $cols)
             foreach ($cols as $key => $col) {
@@ -393,11 +394,11 @@ class ActiveRecord {
 
       $query  = "SELECT $select FROM {$item->table_name}";
       $query .= (count($joins) > 0) ? " " . implode(" ", $joins) : "";
-      $query .= ($where) ? " WHERE $where" : "";
+      $query .= (isset($where)) ? " WHERE $where" : "";
       $query .= ($options['group']) ? " GROUP BY {$options['group']}" : "";
       $query .= ($options['order']) ? " ORDER BY {$options['order']}" : "";
-      $query .= ($limit) ? " LIMIT $limit" : "";
-      $query .= ($offset) ? " OFFSET $offset" : "";
+      $query .= (isset($limit) && $limit) ? " LIMIT $limit" : "";
+      $query .= (isset($offset) && $offset) ? " OFFSET $offset" : "";
       return array('query' => $query, 'column_lookup' => $column_lookup);
   }
 

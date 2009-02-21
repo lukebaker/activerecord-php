@@ -9,7 +9,7 @@ class HasMany extends Association {
   function push($args, &$source) {
     foreach ($args as $object) {
       if (($source->is_new_record() || $object->is_new_record())
-                                    && $this->options['through'])
+              && isset($this->options['through']) && $this->options['through'])
         throw new ActiveRecordException("HasManyThroughCantAssociateNewRecords", ActiveRecordException::HasManyThroughCantAssociateNewRecords);
       if (!$object instanceof $this->dest_class) {
         throw new ActiveRecordException("Expected class: {$this->dest_class}; Received: ".get_class($object), ActiveRecordException::UnexpectedClass);
@@ -18,7 +18,7 @@ class HasMany extends Association {
         /* we want to save $object after $source gets saved */
         $object->set_modified(true);
       }
-      elseif (!$this->options['through']) {
+      elseif (!isset($this->options['through']) || !$this->options['through']) {
         /* since source exists, we always want to save $object */
         $object->{$this->foreign_key} = $source->{$source->get_primary_key()};
         $this->get($source);
@@ -52,7 +52,7 @@ class HasMany extends Association {
         return $this->value; 
       }
       try {
-        if (!$this->options['through']) {
+        if (!isset($this->options['through']) || !$this->options['through']) {
           $collection = call_user_func_array(array($this->dest_class, 'find'),
             array('all',
               array('conditions' => "{$this->foreign_key} = ".$source->{$source->get_primary_key()})));
@@ -108,7 +108,7 @@ class HasMany extends Association {
   */
   function break_up($objects, &$source) {
     foreach ($objects as $object) {
-      if ($this->options['dependent'] == 'destroy')
+      if (isset($this->options['dependent']) && $this->options['dependent'] == 'destroy')
         $object->destroy();
       else {
         if (!$this->options['through']) {
@@ -136,7 +136,7 @@ class HasMany extends Association {
     $source_inst = new $this->source_class;
     $dest_inst = new $this->dest_class;
     $columns = $dest_inst->get_columns();
-    if (!$this->options['through']) {
+    if (!isset($this->options['through']) || !$this->options['through']) {
       $join = "LEFT OUTER JOIN $dest_table ON "
             . "$dest_table.{$this->foreign_key} = $source_table.".$source_inst->get_primary_key();
     }
@@ -176,7 +176,7 @@ class HasMany extends Association {
   function save_as_needed($source) {
     foreach ($this->value as $object) {
       if ($object->is_modified() || $object->is_new_record()) {
-        if (!$this->options['through'])
+        if (!isset($this->options['through']) || !$this->options['through'])
           $object->{$this->foreign_key} = $source->{$source->get_primary_key()};
         $object->save();
       }
