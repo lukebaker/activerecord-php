@@ -1,6 +1,4 @@
 <?php
-if (!class_exists('Inflector'))
-  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'inflector.php';
 class Association {
   protected $dest_class;
   protected $source_class;

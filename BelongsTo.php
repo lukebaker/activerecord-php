@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Association.php';
 class BelongsTo extends Association {
   function __construct(&$source, $dest, $options=null) {
     parent::__construct($source, $dest, $options);

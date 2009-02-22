@@ -1,9 +1,10 @@
 <?php
+if (!class_exists('Inflector'))
+  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'inflector.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Association.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'BelongsTo.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'HasMany.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'HasOne.php';
-if (!class_exists('Inflector'))
-  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'inflector.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'db_adapters' .DIRECTORY_SEPARATOR . AR_ADAPTER.'.php';
 class ActiveRecord {
