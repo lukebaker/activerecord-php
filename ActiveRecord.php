@@ -1,5 +1,5 @@
 <?php
-if (!class_exists('Inflector'))
+if (!class_exists('ActiveRecordInflector'))
   require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'inflector.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Association.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'BelongsTo.php';
@@ -26,7 +26,7 @@ class ActiveRecord {
     /* setup associations */
     foreach ($this->assoc_types as $type) {
       if (isset($this->$type)) {
-        $class_name = Inflector::classify($type);
+        $class_name = ActiveRecordInflector::classify($type);
         foreach ($this->$type as $assoc) {
           $assoc = self::decode_if_json($assoc);
           /* handle association sent in as array with options */
@@ -57,7 +57,7 @@ class ActiveRecord {
       return null;
     elseif (preg_match('/^(.+?)_ids$/', $name, $matches)) {
       /* allow for $p->comment_ids type gets on HasMany associations */
-      $assoc_name = Inflector::pluralize($matches[1]);
+      $assoc_name = ActiveRecordInflector::pluralize($matches[1]);
       if ($this->associations[$assoc_name] instanceof HasMany)
         return $this->associations[$assoc_name]->get_ids($this);
     }
@@ -71,7 +71,7 @@ class ActiveRecord {
 
     /* allow for $p->comment_ids type sets on HasMany associations */
     if (preg_match('/^(.+?)_ids$/', $name, $matches)) {
-      $assoc_name = Inflector::pluralize($matches[1]);
+      $assoc_name = ActiveRecordInflector::pluralize($matches[1]);
     }
 
     if (in_array($name, $this->columns)) {
@@ -291,21 +291,21 @@ class ActiveRecord {
       */
       if (count($query['column_lookup']) > 0) {
         $objects = self::transform_row($row, $query['column_lookup']);
-        $ob_key = md5(serialize($objects[Inflector::tableize($class)]));
+        $ob_key = md5(serialize($objects[ActiveRecordInflector::tableize($class)]));
         /* set cur_object to base object for this row; reusing if possible */
         if (array_key_exists($ob_key, $base_objects)) {
           $cur_object = $base_objects[$ob_key];
         }
         else {
-          $cur_object = new $class($objects[Inflector::tableize($class)], false);
+          $cur_object = new $class($objects[ActiveRecordInflector::tableize($class)], false);
           $base_objects[$ob_key] = $cur_object;
         }
 
         /* now add association data as needed */
         foreach ($objects as $table_name => $attributes) {
-          if ($table_name == Inflector::tableize($class)) continue;
+          if ($table_name == ActiveRecordInflector::tableize($class)) continue;
           foreach ($cur_object->associations as $assoc_name => $assoc) {
-            if ($table_name == Inflector::pluralize($assoc_name))
+            if ($table_name == ActiveRecordInflector::pluralize($assoc_name))
               $assoc->populate_from_find($attributes);
           }
         }
@@ -369,7 +369,7 @@ class ActiveRecord {
       $column_lookup = array();
       if (isset($options['include'])) {
         array_push($tables_to_columns,
-          array(Inflector::tableize(get_class($item)) => $item->get_columns()));
+          array(ActiveRecordInflector::tableize(get_class($item)) => $item->get_columns()));
         $includes = preg_split('/[\s,]+/', $options['include']);
         // get join part of query from association and column names
         foreach ($includes as $include) {

@@ -2,7 +2,7 @@
 class HasMany extends Association {
   function __construct(&$source, $dest, $options=null) {
     parent::__construct($source, $dest, $options);
-    $this->foreign_key = Inflector::foreign_key($this->source_class);
+    $this->foreign_key = ActiveRecordInflector::foreign_key($this->source_class);
   }
 
   function push($args, &$source) {
@@ -30,9 +30,9 @@ class HasMany extends Association {
         foreach ($this->value as $val)
           if ($val == $object) $skip = true;
         if (!$skip) {
-          $through_class = Inflector::classify($this->options['through']);
-          $fk_1 = Inflector::foreign_key($this->dest_class);
-          $fk_2 = Inflector::foreign_key($this->source_class);
+          $through_class = ActiveRecordInflector::classify($this->options['through']);
+          $fk_1 = ActiveRecordInflector::foreign_key($this->dest_class);
+          $fk_2 = ActiveRecordInflector::foreign_key($this->source_class);
           $k1   = $object->{$object->get_primary_key()};
           $k2   = $source->{$source->get_primary_key()};
           $through = new $through_class( array($fk_1 => $k1, $fk_2 => $k2) );
@@ -115,9 +115,9 @@ class HasMany extends Association {
           $object->save();
         }
         else {
-          $through_class = Inflector::classify($this->options['through']);
-          $fk_1 = Inflector::foreign_key($this->dest_class);
-          $fk_2 = Inflector::foreign_key($this->source_class);
+          $through_class = ActiveRecordInflector::classify($this->options['through']);
+          $fk_1 = ActiveRecordInflector::foreign_key($this->dest_class);
+          $fk_2 = ActiveRecordInflector::foreign_key($this->source_class);
           $k1   = $object->{$object->get_primary_key()};
           $k2   = $source->{$source->get_primary_key()};
           $through = call_user_func_array(array($through_class, 'find'),
@@ -130,8 +130,8 @@ class HasMany extends Association {
   }
 
   function join() {
-    $dest_table = Inflector::tableize($this->dest_class);
-    $source_table = Inflector::tableize($this->source_class);
+    $dest_table = ActiveRecordInflector::tableize($this->dest_class);
+    $source_table = ActiveRecordInflector::tableize($this->source_class);
     $source_inst = new $this->source_class;
     $dest_inst = new $this->dest_class;
     $columns = $dest_inst->get_columns();
@@ -143,7 +143,7 @@ class HasMany extends Association {
       $join = "LEFT OUTER JOIN {$this->options['through']} ON "
             . "{$this->options['through']}.{$this->foreign_key} = $source_table.".$source_inst->get_primary_key() ." "
             . "LEFT OUTER JOIN $dest_table ON "
-            . "$dest_table.".$dest_inst->get_primary_key() ." = {$this->options['through']}." . Inflector::foreign_key($this->dest_class);
+            . "$dest_table.".$dest_inst->get_primary_key() ." = {$this->options['through']}." . ActiveRecordInflector::foreign_key($this->dest_class);
     }
     return array( array($dest_table => $columns), $join);
   }

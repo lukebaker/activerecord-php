@@ -9,7 +9,7 @@
 
 # The Inflector transforms words from singular to plural, class names to table names, modularized class names to ones without,
 # and class names to foreign keys.
-class Inflector {
+class ActiveRecordInflector {
     function pluralize($word) {
         $result = strval($word);
 

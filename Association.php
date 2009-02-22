@@ -7,7 +7,7 @@ class Association {
   
   function __construct($source, $dest, $options=null) {
     $this->source_class = get_class($source);
-    $this->dest_class = Inflector::classify($dest);
+    $this->dest_class = ActiveRecordInflector::classify($dest);
     $this->options = $options;
   }
 
