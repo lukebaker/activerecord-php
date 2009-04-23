@@ -27,7 +27,7 @@ foreach ($tables as $table_row) {
     if (!in_array($table_vanity_name, $AR_TABLES))
       continue;
   }
-  $class_name = Inflector::classify($table_vanity_name);
+  $class_name = ActiveRecordInflector::classify($table_vanity_name);
   $columns_q = ActiveRecord::query("DESC $table_name");
   $columns = array();
   foreach ($columns_q as $column_row) {

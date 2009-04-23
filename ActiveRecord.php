@@ -104,12 +104,21 @@ class ActiveRecord {
     This calls push([$comment], $p) on the comments association
   */
   function __call($name, $args) {
-    list($assoc, $func) = explode("_", $name, 2);
-    if (array_key_exists($assoc, $this->associations)) {
-      return $this->associations[$assoc]->$func($args, $this);
+    // find longest available association that matches beginning of method
+    $longest_assoc = '';
+    foreach (array_keys($this->associations) as $assoc) {
+      if (strpos($name, $assoc) === 0 &&
+            strlen($assoc) > strlen($longest_assoc)) {
+        $longest_assoc = $assoc;
+      }
+    }
+
+    if ($longest_assoc !== '') {
+      list($null, $func) = explode($longest_assoc.'_', $name, 2);
+      return $this->associations[$longest_assoc]->$func($args, $this);
     }
     else {
-      throw new ActiveRecordException("method or association not found ($assoc, $func)", ActiveRecordException::MethodOrAssocationNotFound);
+      throw new ActiveRecordException("method or association not found for ($name)", ActiveRecordException::MethodOrAssocationNotFound);
     }
   }
 
