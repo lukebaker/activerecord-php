@@ -38,7 +38,7 @@ class TestActiveRecord extends BaseTest {
       new Post();
     $end_time = microtime(true);
     # must be able to do at least 400 constructors / second
-    $this->AssertTrue((1000 / ($end_time - $start_time)) > 400);
+    $this->AssertTrue((1000 / ($end_time - $start_time)) > 400, "Constructors per second: ".(1000 / ($end_time - $start_time)));
   }
 
   function test_FindEnsureIsModifiedEqualsFalse() {
