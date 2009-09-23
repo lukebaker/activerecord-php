@@ -1,0 +1,15 @@
+td.ccLineNumber, td.ccCoveredLine, td.ccUncoveredLine, td.ccNotExecutableLine {
+   font-family: monospace;
+   white-space: pre;
+ }
+
+ td.ccLineNumber, td.ccCoveredLine {
+   background-color: #aaaaaa;
+ }
+ td.ccUncoveredLine {
+    background-color: red;
+ }
+
+ td.ccNotExecutableLine {
+   color: #aaaaaa;
+ }

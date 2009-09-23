@@ -6,6 +6,8 @@ require_once '../models/Category.php';
 require_once '../models/Categorization.php';
 require_once '../models/Slug.php';
 
+class ActiveRecordConstructorTest { }
+
 class TestActiveRecord extends BaseTest {
   function test_ConstructorGood() {
     $p = new Post( array('id' => 1) );
@@ -33,12 +35,21 @@ class TestActiveRecord extends BaseTest {
   }
 
   function test_Constructors() {
-    $start_time = microtime(true);
+    new Comment();
+    $c_start_time = microtime(true);
     for ($i = 0; $i < 1000; $i++)
-      new Post();
-    $end_time = microtime(true);
-    # must be able to do at least 400 constructors / second
-    $this->AssertTrue((1000 / ($end_time - $start_time)) > 400, "Constructors per second: ".(1000 / ($end_time - $start_time)));
+      new Comment();
+    $c_end_time = microtime(true);
+
+    $t_start_time = microtime(true);
+    for ($i = 0; $i < 1000; $i++)
+      new ActiveRecordConstructorTest();
+    $t_end_time = microtime(true);
+
+    $c_time = $c_end_time - $c_start_time;
+    $t_time = $t_end_time - $t_start_time;
+    # each timing should be within 3 seconds of each other
+    $this->AssertWithinMargin($c_time, $t_time, 3);
   }
 
   function test_FindEnsureIsModifiedEqualsFalse() {
