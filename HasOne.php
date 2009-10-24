@@ -2,7 +2,6 @@
 class HasOne extends Association {
   function __construct(&$source, $dest, $options=null) {
     parent::__construct($source, $dest, $options);
-    $this->foreign_key = ActiveRecordInflector::foreign_key($this->source_class);
   }
 
   function set($value, &$source) {

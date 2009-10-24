@@ -7,7 +7,21 @@ class Association {
   
   function __construct($source, $dest, $options=null) {
     $this->source_class = get_class($source);
-    $this->dest_class = ActiveRecordInflector::classify($dest);
+
+    if (isset($options['class_name']))  {
+      $this->dest_class = $options['class_name'];
+    }
+    else {
+      $this->dest_class = ActiveRecordInflector::classify($dest);
+    }
+
+    if (isset($options['foreign_key'])) {
+      $this->foreign_key = $options['foreign_key'];
+    }
+    else {
+      $this->foreign_key = ActiveRecordInflector::foreign_key($this->source_class);
+    }
+    
     $this->options = $options;
   }
 
