@@ -188,6 +188,53 @@ class TestActiveRecord extends BaseTest {
     $this->AssertFalse($s->is_modified());
     
   }
+
+  function test_conditions_with_simple_array() {
+    $p1 = Post::find(1);
+    $title = 'First Post';
+    $p = Post::find('first', array('conditions' => array('title = ?', $title)));
+    $this->AssertEqual($p1, $p);
+
+    $p = Post::find('first', array('conditions' =>
+      array('title = ? OR title = ?', 'NOT FOUND TITLE', $title)));
+    $this->AssertEqual($p1, $p);
+  } 
+
+  function test_conditions_with_bind_parameters() {
+    $p1 = Post::find(1);
+    $p = Post::find('first', array('conditions' =>
+        array('title = :title OR title = :title2', 'title2' => 'NOT FOUND TITLE', 'title' => $p1->title)));
+    $this->AssertEqual($p1, $p);
+
+    $p = Post::find('first', array('conditions' =>
+        array('title = :title OR title = :title2', array('title2' => 'NOT FOUND TITLE', 'title' => $p1->title))));
+    $this->AssertEqual($p1, $p);
+  }
+
+  function test_conditions_with_assoc_array() {
+    $p1 = Post::find(1);
+    $p = Post::find('first', array('conditions' => array(
+      'title' => $p1->title
+    )));
+    $this->AssertEqual($p1, $p);
+
+    $p = Post::find('first', array('conditions' => array(
+      'title' => $p1->title,
+      'body'  => $p1->body,
+    )));
+    $this->AssertEqual($p1, $p);
+
+    $p = Post::find('first', array('conditions' => array(
+      'title' => $p1->title,
+      'body'  => $p1->body."baser",
+    )));
+    $this->AssertNotEqual($p1, $p);
+
+    $p = Post::find('first', array('conditions' => array(
+      'id' => array(1, 999238812838),
+    )));
+    $this->AssertEqual($p1, $p);
+  }
 }
 
 ?>

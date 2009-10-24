@@ -2,6 +2,11 @@
 
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__).'/../vendors/');
 
+// Report all PHP errors
+#error_reporting(-1);
+
+error_reporting(E_ALL ^ E_NOTICE);
+
 require_once 'PHPUnit2/Util/CodeCoverage/Renderer.php';
 require_once 'simpletest/unit_tester.php';
 require_once 'simpletest/mock_objects.php';
