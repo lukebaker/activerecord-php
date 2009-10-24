@@ -364,9 +364,11 @@ class ActiveRecord {
       elseif ($id != 'all')
         $where = "{$item->table_name}.{$item->primary_key} = $id";
 
-      if (isset($options['conditions']))
-        $where = (isset($where) && $where) ? $where . " AND (" . $options['conditions'] .")"
-                          : $options['conditions'];
+      if (isset($options['conditions'])) {
+        $cond = self::convert_conditions_to_where($options['conditions']);
+        $where = (isset($where) && $where) ? $where . " AND " . $cond : $cond;
+      }
+
       if ($options['offset'])
         $offset = $options['offset'];
       if ($options['limit'] && !isset($limit))
@@ -410,6 +412,54 @@ class ActiveRecord {
       $query .= (isset($limit) && $limit) ? " LIMIT $limit" : "";
       $query .= (isset($offset) && $offset) ? " OFFSET $offset" : "";
       return array('query' => $query, 'column_lookup' => $column_lookup);
+  }
+
+  public static function convert_conditions_to_where($conditions) {
+    if (is_string($conditions)) { return " ( " .$conditions. " ) "; }
+    /* handle both normal array with place holders
+        and associative array */
+    if (is_array($conditions)) {
+      // simple array
+      if (reset(array_keys($conditions)) === 0 &&
+                    end(array_keys($conditions)) === count($conditions) - 1 &&
+                    !is_array(end($conditions))) {
+        $condition = " ( " .array_shift($conditions). " ) ";
+        foreach ($conditions as $value) {
+          $value = self::quote($value);
+          $condition = preg_replace('|\?|', $value, $condition, 1);
+        }
+        return $condition;
+      }
+      /* array starts with a key of 0
+          next element can be an associative array of bind variables
+          or array can continue with bind variables with keys specified */
+      elseif (reset(array_keys($conditions)) === 0) {
+        $condition = " ( " .array_shift($conditions). " ) ";
+        if (is_array(reset($conditions))) {
+          $conditions = reset($conditions);
+        }
+
+        foreach ($conditions as $key => $value) {
+          $value = self::quote($value);
+          $condition = preg_replace("|:$key|", $value, $condition, 1);
+        }
+        return $condition;
+      }
+      // associative array
+      else {
+        $condition = " ( ";
+        $w = array();
+        foreach ($conditions as $key => $value) {
+          if (is_array($value)) {
+            $w[] = '`' .$key. '` IN ( ' .join(", ", $value). ' )';
+          }
+          else {
+            $w[] = '`' .$key. '` = '. self::quote($value);
+          }
+        }
+        return $condition . join(" AND ", $w).  " ) ";
+      }
+    }
   }
 
 }
