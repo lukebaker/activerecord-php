@@ -1,0 +1,4 @@
+- alter config to use ActiveRecordConfig::set('blah', $value); syntax
+- when possible do joins with multiple queries instead of one
+- make updating schema a bit more robust (i.e., allow users update DB schema without stuff breaking)
+- support db schemas that don't fall in line with convention
