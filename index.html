@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="ActiveRecord PHP : ActiveRecord in PHP" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>ActiveRecord PHP</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/lukebaker/activerecord-php">View on GitHub</a>
+
+          <h1 id="project_title">ActiveRecord PHP</h1>
+          <h2 id="project_tagline">ActiveRecord in PHP</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/lukebaker/activerecord-php/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/lukebaker/activerecord-php/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>ActiveRecord In PHP</h1>
+
+<h2>Motiviation</h2>
+
+<p>I wrote this after having been spoiled by Ruby on Rails’ implementation
+of the ActiveRecord pattern, while still needing to work primarily in
+PHP. When I started this, there did exist some
+ORM options in PHP.
+However, I wasn’t satisfied with any one in particular. My goals were to
+create an implementation that was very similar to the Rails syntax, easy
+to install, and fast.</p>
+
+<h2>Requirements</h2>
+
+<ul>
+<li>  PHP5</li>
+<li>  Naming of tables and columns that follows the Rails convention.</li>
+</ul><h2>Installation</h2>
+
+<ol>
+<li> Create your database and tables, if you haven’t already. (remember
+use Rails’ conventions for table and column names)</li>
+<li>
+<p>Download <a href="https://github.com/lukebaker/activerecord-php/tags">recent ActiveRecord release</a> or</p>
+
+<pre><code>git clone https://github.com/lukebaker/activerecord-php.git
+</code></pre>
+</li>
+<li><p>Untar into a models/ directory within your project or move checked
+out directory activerecord-php/ into your models/ directory.</p></li>
+<li><p>There should now be a models/activerecord-php/ directory, edit
+models/activerecord-php/config.php to your liking.</p></li>
+<li><p>Run models/activerecord-php/generate.php</p></li>
+<li><p>This should have have generated model stubs inside your models/
+directory. Edit these model files to tell ActiveRecord about the
+relationships between tables. Do not edit *Base.php files as they
+get overwritten every time you run generate.php</p></li>
+<li>
+<p>Use ActiveRecord, by including the models that you want to use:</p>
+
+<pre><code>require_once 'models/Post.php';
+</code></pre>
+</li>
+</ol><h2>Example</h2>
+
+<h3>Create</h3>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'First Post!11!'</span><span class="p">,</span> <span class="s1">'body'</span> <span class="o">=&gt;</span> <span class="s1">'This is the body of my post'</span><span class="p">));</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># saves this post to the table</span>
+
+<span class="nv">$p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">();</span>
+<span class="nv">$p2</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s2">"Second Post"</span><span class="p">;</span>
+<span class="nv">$p2</span><span class="o">-&gt;</span><span class="na">body</span> <span class="o">=</span> <span class="s2">"This is the body of the second post"</span><span class="p">;</span>
+<span class="nv">$p2</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># save yet another post to the db</span>
+</pre></div>
+
+<h3>Retrieve</h3>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1"># finds the post with an id = 1</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span> <span class="c1"># title of this post</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>  <span class="c1"># body of this post</span>
+
+<span class="c1"># returns the 10 most recent posts in an array, assuming you have a column called "timestamp"</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'all'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'order'</span> <span class="o">=&gt;</span> <span class="s1">'timestamp DESC'</span><span class="p">,</span> <span class="s1">'limit'</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">));</span>
+</pre></div>
+
+<h3>Update</h3>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s2">"Some new title"</span><span class="p">;</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># saves the change to the post</span>
+
+<span class="c1"># alternatively, the following is useful when a form submits an array</span>
+<span class="nv">$_POST</span><span class="p">[</span><span class="s1">'post'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'New Title'</span><span class="p">,</span> <span class="s1">'body'</span> <span class="o">=&gt;</span> <span class="s1">'New body here!'</span><span class="p">);</span>
+<span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">update_attributes</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'post'</span><span class="p">]);</span> <span class="c1"># saves the object with these attributes updated</span>
+</pre></div>
+
+<h3>Destroy</h3>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">destroy</span><span class="p">();</span>
+</pre></div>
+
+<h3>Relationships</h3>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="c1"># call to $p-&gt;comments results in query to get all comments for this post</span>
+<span class="c1"># a subsequent call to $p-&gt;comments would not result in a query, but use results from previous query</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$p</span><span class="o">-&gt;</span><span class="na">comments</span> <span class="k">as</span> <span class="nv">$comment</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="nv">$comment</span><span class="o">-&gt;</span><span class="na">content</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>Documentation</h2>
+
+<p>While this attempts to document most of the features of ActiveRecord, it may not be entirely complete. I've tried to create tests for all pieces of functionality that exist in ActiveRecord. To view and / or run these tests check out the devel/ branch in the Subversion repository. In other words, there may be some functionality that is not documented here but is used in the tests.</p>
+
+<p>For example purposes, let’s pretend we’re building a blog. You’ll have model classes which are each the model of a database table. Each model class is in a separate file. The stubs of these files are automatically generated for you by generate.php. Every time you update your database schema, you'll have to run generate.php again. It will not overwrite the files you've altered, but will overwrite the *Base.php files. Once you have the model stubs generated you can use them and work with the tables individually. However, in order to use the relationship specific abilities of ActiveRecord, you’ll need to specify the relationships in your models as outlined below in the Associations section.</p>
+
+<h3>Associations</h3>
+
+<p>In ActiveRecord we specify relationships between the tables in the model
+classes. There are 3 types of relationships, 1:1, 1:many, and many:many.</p>
+
+<h4>1:1</h4>
+
+<p>In our example, blog posts have a 1:1 relationship with slugs. Here’s
+how you’d specify that inside the Post and Slug classes.</p>
+
+<div class="highlight"><pre><span class="cm">/* inside Post.php */</span>
+  <span class="k">protected</span> <span class="nv">$has_one</span>  <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'slug'</span><span class="p">);</span>
+
+<span class="cm">/* inside Slug.php */</span>
+  <span class="k">protected</span> <span class="nv">$belongs_to</span>  <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'post'</span><span class="p">);</span>
+</pre></div>
+
+<p>In a 1:1 relationship we must specify each side of the relationship
+slightly differently so that ActiveRecord knows the “direction” of the
+relationship. We use belongs_to for the model whose table contains the
+foreign key (post_id in this case). The other side of the relationship
+uses has_one. Since an object could have multiple 1:1 relationships, we
+use an array to allow for additional tables. Notice the singular use of
+slug and post. The code tries to read like English as much as possible,
+so later when we do 1:many relationships you’ll plural strings. After
+you’ve specified this relationship you can do some extra things with
+your models. On every slug and post object you can now do →post and
+→slug to get its post and slug respectively as an ActiveRecord object.
+Also you set assign a slug or post using this mechanism. Furthermore, a
+save will cascade to the relationship.</p>
+
+<div class="highlight"><pre><span class="nv">$slug</span> <span class="o">=</span> <span class="nx">Slug</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">);</span> <span class="c1"># SQL query to grab first slug</span>
+<span class="nv">$slug</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">;</span> <span class="c1"># an SQL query occurs behind the scenes to find the slug's post</span>
+
+<span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'include'</span> <span class="o">=&gt;</span> <span class="s1">'slug'</span><span class="p">));</span> <span class="c1"># SQL join</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">slug</span><span class="p">;</span> <span class="c1"># no SQL query here because we already got this post's slug in the SQL join in the previous line</span>
+
+<span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">);</span>
+<span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Slug</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'slug'</span> <span class="o">=&gt;</span> <span class="s1">'super-slug'</span><span class="p">));</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">slug</span> <span class="o">=</span> <span class="nv">$s</span><span class="p">;</span> <span class="c1"># assign a slug to this post</span>
+
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">slug</span><span class="o">-&gt;</span><span class="na">slug</span> <span class="o">=</span> <span class="s1">'foobar'</span><span class="p">;</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># cascading save (post and slug are saved)</span>
+</pre></div>
+
+<h4>1:many</h4>
+
+<p>In our example a post has many comments, but a comment only has one
+post. Here’s how you’d specify it in the Post and Comment classes.</p>
+
+<div class="highlight"><pre><span class="cm">/* inside Post.php */</span>
+  <span class="k">protected</span> <span class="nv">$has_many</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'comments'</span><span class="p">);</span>
+
+<span class="cm">/* inside Comment.php */</span>
+  <span class="k">protected</span> <span class="nv">$belongs_to</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'post'</span><span class="p">);</span>
+</pre></div>
+
+<p>Notice, we used plural “comments” for the has_many and a singular
+“post” for belongs_to. Also notice how the comments table contains the
+foreign key (post_id) and therefore is a belongs_to relationship. Once
+we’ve done this Comment can do the same things as an 1:something
+relationship can (see 1:1). Post now has some slight variations to the
+features added in a 1:1 relationship. Now when accessing the attribute
+comments you’d get an array of comment ActiveRecord objects that belong
+to this Post.</p>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$p</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>
+</pre></div>
+
+<p>You can also get the list of comment ids that belong to this post by
+calling →comment_ids. You can set the ids in a similar fashion.</p>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">);</span>
+<span class="nv">$foo</span> <span class="o">=</span> <span class="nv">$p</span><span class="o">-&gt;</span><span class="na">comment_ids</span><span class="p">;</span>
+<span class="c1"># foo is now an array of comment ids that belong to this post</span>
+<span class="nb">array_pop</span><span class="p">(</span><span class="nv">$foo</span><span class="p">);</span> <span class="c1"># pop off last comment id</span>
+<span class="nb">array_push</span><span class="p">(</span><span class="nv">$foo</span><span class="p">,</span> <span class="mi">23</span><span class="p">);</span> <span class="c1"># and another comment id to $foo</span>
+
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">comment_ids</span> <span class="o">=</span> <span class="nv">$foo</span><span class="p">;</span>
+<span class="cm">/* this will remove the comment we popped off of foo</span>
+<span class="cm">    and add the comment we pushed onto foo to this post</span>
+<span class="cm">*/</span>
+</pre></div>
+
+<p>You can also push new objects onto the relationships.</p>
+
+<div class="highlight"><pre><span class="nv">$c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Comment</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'author'</span> <span class="o">=&gt;</span> <span class="s1">'anon'</span><span class="p">,</span> <span class="s1">'body'</span> <span class="o">=&gt;</span> <span class="s1">'first comment!!11'</span><span class="p">));</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">comments_push</span><span class="p">(</span><span class="nv">$c</span><span class="p">);</span> <span class="c1"># this call saves the new comment and associates with this post</span>
+</pre></div>
+
+<p>In this example, we might want to have comments destroyed when their
+post is destroyed or when they are disassociated with their post. You
+can have this happen by specifying the relationship slightly
+differently. You can do this on any sort of relationship. Instead have
+the following in the Post model.</p>
+
+<div class="highlight"><pre><span class="cm">/* inside Post.php */</span>
+  <span class="k">protected</span> <span class="nv">$has_many</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'comments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'dependent'</span> <span class="o">=&gt;</span> <span class="s1">'destroy'</span><span class="p">)));</span>
+</pre></div>
+
+<h4>many:many</h4>
+
+<p>A many:many relationship will have an intermediate table (and therefore
+model) which ties two other tables together. In our example, there is a
+many:many relationship between posts and categories. Our intermediate
+table is categorizations. Here is how that is specified:</p>
+
+<div class="highlight"><pre><span class="cm">/* inside Categorization.php */</span>
+  <span class="k">protected</span> <span class="nv">$belongs_to</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'post'</span><span class="p">,</span> <span class="s1">'category'</span><span class="p">);</span>
+
+<span class="cm">/* inside Post.php */</span>
+  <span class="k">protected</span> <span class="nv">$has_many</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>  <span class="s1">'categorizations'</span><span class="p">,</span>
+                          <span class="k">array</span><span class="p">(</span><span class="s1">'categories'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'through'</span> <span class="o">=&gt;</span> <span class="s1">'categorizations'</span><span class="p">)));</span>
+
+<span class="cm">/* inside Category.php */</span>
+  <span class="k">protected</span> <span class="nv">$has_many</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>  <span class="s1">'categorizations'</span><span class="p">,</span> 
+                          <span class="k">array</span><span class="p">(</span><span class="s1">'posts'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'through'</span> <span class="o">=&gt;</span> <span class="s1">'categorizations'</span><span class="p">)));</span>
+</pre></div>
+
+<p>Since the categorizations table contains the foreign keys post_id and
+category_id, it has a belongs_to relationship with those. The Post
+model has a regular has_many relationship with categorizations and a
+special has_many relationship with categories. We specify which table
+that relationship goes through (categorizations), IOW which table is the
+intermediate table of that relationship. The category to post
+relationship is specified similarly. Posts and categories can now use
+the special has_many methods documented in the 1:many relationship.</p>
+
+<h3>Working With Models</h3>
+
+<p>This section applies to all models regardless of any associations they
+may have.</p>
+
+<h4>Create</h4>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'First Post!11!'</span><span class="p">,</span> <span class="s1">'body'</span> <span class="o">=&gt;</span> <span class="s1">'This is the body of my post'</span><span class="p">));</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># saves this post to the table</span>
+
+<span class="nv">$p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">();</span>
+<span class="nv">$p2</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s2">"Second Post"</span><span class="p">;</span>
+<span class="nv">$p2</span><span class="o">-&gt;</span><span class="na">body</span> <span class="o">=</span> <span class="s2">"This is the body of the second post"</span><span class="p">;</span>
+<span class="nv">$p2</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># save yet another post to the db</span>
+</pre></div>
+
+<h4>Retrieve</h4>
+
+<p>Retrieving data involves finding the rows you want to look at and
+subsequently grabbing the column data as needed. The first parameter for
+the find method should be one of the following:</p>
+
+<ul>
+<li>  an id number</li>
+<li>  an array of id numbers</li>
+<li>  the string “first”</li>
+<li>  the string “all”</li>
+</ul><p>When the first parameter is an id number or the string “first”, the
+result will be an ActiveRecord object. Otherwise, it will be an array of
+ActiveRecord objects. The find method takes quite a few different
+options for its second parameter by using “named parameters” by
+accepting an array of key, value pairs. You can pass it the following
+keys with sane values:</p>
+
+<ul>
+<li>  limit</li>
+<li>  order</li>
+<li>  group</li>
+<li>  offset</li>
+<li>  select</li>
+<li>  conditions</li>
+<li>  include (for associations)</li>
+</ul><div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1"># finds the post with an id = 1</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span> <span class="c1"># title of this post</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>  <span class="c1"># body of this post</span>
+
+<span class="c1"># returns the 10 most recent posts in an array, assuming you have a column called "timestamp"</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'all'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'order'</span> <span class="o">=&gt;</span> <span class="s1">'timestamp DESC'</span><span class="p">,</span> <span class="s1">'limit'</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">));</span>
+</pre></div>
+
+<h4>Update</h4>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s2">"Some new title"</span><span class="p">;</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1"># saves the change to the post</span>
+
+<span class="c1"># alternatively, the following is useful when a form submits an array</span>
+<span class="nv">$_POST</span><span class="p">[</span><span class="s1">'post'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'New Title'</span><span class="p">,</span> <span class="s1">'body'</span> <span class="o">=&gt;</span> <span class="s1">'New body here!'</span><span class="p">);</span>
+<span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">update_attributes</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'post'</span><span class="p">]);</span> <span class="c1"># saves the object with these attributes updated</span>
+</pre></div>
+
+<h4>Destroy</h4>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">destroy</span><span class="p">();</span>
+</pre></div>
+
+<h4>Hooks</h4>
+
+<p>The following hooks are available, just define the method of the same
+name in the model that you want to use them:</p>
+
+<ul>
+<li>  before_save</li>
+<li>  before_create</li>
+<li>  after_create</li>
+<li>  before_update</li>
+<li>  after_update</li>
+<li>  after_save</li>
+<li>  before_destroy</li>
+<li>  after_destroy</li>
+</ul><h4>Escaping Query Values</h4>
+
+<p>ActiveRecord will do proper escaping of query values passed to where
+possible. However, it can’t do proper quoting when you do something like
+the following.</p>
+
+<div class="highlight"><pre><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'conditions'</span> <span class="o">=&gt;</span> <span class="s2">"title = </span><span class="si">{</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
+</pre></div>
+
+<p>Instead you can use the quote static method to quote that value like so.</p>
+
+<div class="highlight"><pre><span class="nv">$title</span> <span class="o">=</span> <span class="nx">ActiveRecord</span><span class="o">::</span><span class="na">quote</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]);</span>
+<span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="s1">'first'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'conditions'</span> <span class="o">=&gt;</span> <span class="s2">"title = </span><span class="si">$title</span><span class="s2">"</span><span class="p">));</span>
+</pre></div>
+
+<h4>Manual Queries</h4>
+
+<p>Occasionally, though hopefully rarely, you may need to do specify some
+queries by hand. You can use the query static method. This returns an
+associative array with all the rows in it.</p>
+
+<div class="highlight"><pre><span class="nx">ActiveRecord</span><span class="o">::</span><span class="na">query</span><span class="p">(</span><span class="s2">"SELECT COUNT(*) FROM bar as b1, bar as b2 where b2.id != b1.id"</span><span class="p">);</span>
+</pre></div>
+
+<h3>Table Structure For Example</h3>
+
+<div class="highlight"><pre><span class="c1">--</span>
+<span class="c1">-- Table structure for table `categories`</span>
+<span class="c1">--</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">TYPE</span><span class="o">=</span><span class="n">MyISAM</span><span class="p">;</span>
+
+<span class="c1">--</span>
+<span class="c1">-- Table structure for table `categorizations`</span>
+<span class="c1">--</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">categorizations</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">post_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">TYPE</span><span class="o">=</span><span class="n">MyISAM</span><span class="p">;</span>
+
+<span class="c1">--</span>
+<span class="c1">-- Table structure for table `comments`</span>
+<span class="c1">--</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">comments</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">author</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">body</span><span class="o">`</span> <span class="nb">text</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">post_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">TYPE</span><span class="o">=</span><span class="n">MyISAM</span><span class="p">;</span>
+
+<span class="c1">--</span>
+<span class="c1">-- Table structure for table `posts`</span>
+<span class="c1">--</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">posts</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">title</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">body</span><span class="o">`</span> <span class="nb">text</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">TYPE</span><span class="o">=</span><span class="n">MyISAM</span><span class="p">;</span>
+
+<span class="c1">--</span>
+<span class="c1">-- Table structure for table `slugs`</span>
+<span class="c1">--</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">slugs</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">slug</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">post_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">TYPE</span><span class="o">=</span><span class="n">MyISAM</span><span class="p">;</span>
+</pre></div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">ActiveRecord PHP maintained by <a href="https://github.com/lukebaker">lukebaker</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
