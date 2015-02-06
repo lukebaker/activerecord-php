@@ -150,7 +150,7 @@ class ActiveRecord {
   static function &get_dbh() {
     if (!self::$dbh) {
       self::$dbh = call_user_func_array(array(AR_ADAPTER."Adapter", __FUNCTION__),
-        array(AR_HOST, AR_DB, AR_USER, AR_PASS, AR_DRIVER));
+        array(AR_HOST, AR_PORT, AR_DB, AR_USER, AR_PASS, AR_DRIVER));
     }
     return self::$dbh;
   }
@@ -202,6 +202,7 @@ class ActiveRecord {
       /* insert new record */
       foreach ($this->columns as $column) {
         if ($column == $this->primary_key) continue;
+        if (is_null($this->$column)) continue;
         $columns[] = '`' . $column . '`';
         if (is_null($this->$column))
           $values[] = 'NULL';
@@ -225,6 +226,7 @@ class ActiveRecord {
       $col_vals = array();
       foreach ($this->columns as $column) {
         if ($column == $this->primary_key) continue;
+        if (is_null($this->$column)) continue;
         $value = is_null($this->$column) ? 'NULL' : self::quote($this->$column);
         $col_vals[] = "`$column` = $value";
       }
@@ -453,6 +455,9 @@ class ActiveRecord {
           if (is_array($value)) {
             $w[] = '`' .$key. '` IN ( ' .join(", ", $value). ' )';
           }
+          elseif (is_null($value)) {
+            $w[] = '`' .$key. '` is null';
+          }
           else {
             $w[] = '`' .$key. '` = '. self::quote($value);
           }
@@ -474,7 +479,7 @@ class ActiveRecordException extends Exception {
 }
 
 interface DatabaseAdapter {
-  static function get_dbh($host="localhost", $db=null, $user=null, $password=null, $driver="mysql");
+  static function get_dbh($host="localhost", $port="3306", $db=null, $user=null, $password=null, $driver="mysql");
   static function query($query, $dbh=null);
   static function quote($string, $dbh=null, $type=null);
   static function last_insert_id($dbh=null, $resource=null);
