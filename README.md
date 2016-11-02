@@ -1,6 +1,6 @@
 # ActiveRecord In PHP
 
-## Motiviation
+## Motivation
 
 I wrote this after having been spoiled by Ruby on Rails’ implementation
 of the ActiveRecord pattern, while still needing to work primarily in
